@@ -6,7 +6,7 @@ using Services;
 
 namespace QCode.Application.Features.Trades
 {
-    public static class GetTradePositions
+    public static class GetPositions
     {
         public class Query : IRequest<Response> { }
 

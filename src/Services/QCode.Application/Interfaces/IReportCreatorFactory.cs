@@ -10,6 +10,6 @@ namespace QCode.Application.Interfaces
 {
     public interface IReportCreatorFactory
     {
-        public BaseReportCreator CreateFileCreator(FileType type);
+        public IReportCreator CreateFileCreator(FileType type);
     }
 }

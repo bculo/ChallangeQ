@@ -1,15 +1,17 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Polly;
 using QCode.Application.Common.Enums;
+using QCode.Application.Common.Models;
+using QCode.Application.Common.Options;
 using QCode.Application.Interfaces;
 using QCode.Application.Services;
-using QCode.Core.Exceptions;
 using Services;
 
 namespace QCode.Application.Features.Trades
 {
-    public static class CreateTradePositionsReport
+    public static class CreatePositionsReport
     {
         public class Command : IRequest 
         {
@@ -17,7 +19,6 @@ namespace QCode.Application.Features.Trades
             public DateTime StartOfTheDay { get; set; }
             public DateTime EndOfTheDay { get; set; }
             public FileType Type { get; set; }
-            public string? FileLocation { get; set; }
         }
 
         public class Handler : IRequestHandler<Command>
@@ -25,24 +26,27 @@ namespace QCode.Application.Features.Trades
             private readonly ILogger<Handler> _logger;
             private readonly IPowerService _powerService;
             private readonly IReportCreatorFactory _factory;
+            private FileReportOptions _options;
 
             public Handler(ILogger<Handler> logger,
                 IPowerService powerService,
-                IReportCreatorFactory factory)
+                IReportCreatorFactory factory,
+                IOptionsSnapshot<FileReportOptions> options)
             {
                 _logger = logger;
                 _powerService = powerService;
                 _factory = factory;
+                _options = options.Value;
             }
 
             public async Task Handle(Command request, CancellationToken cancellationToken)
             {
-                var trades = await _powerService.GetTradesAsync(request.DateTime);
+                var polly = Policy.Handle<Exception>()
+                    .WaitAndRetryAsync(3,
+                        _ => TimeSpan.FromSeconds(1),
+                        (Exception e, TimeSpan s) => _logger.LogError(e, e.Message));
 
-                if(trades is null || !trades.Any())
-                {
-                    throw new QCodeBaseException("Powerservice returned empty array or null");
-                }
+                var trades = await polly.ExecuteAsync(async () => await _powerService.GetTradesAsync(request.DateTime));
 
                 var reportCreator = _factory.CreateFileCreator(request.Type);
 
@@ -54,37 +58,24 @@ namespace QCode.Application.Features.Trades
             private ReportRequest CreateReportRequestModel(IEnumerable<PowerTrade> trades, Command request)
             {
                 var slidingDate = request.StartOfTheDay;
-                var periodCalcs = CalculateVolumeByPeriod(trades);
+                var periodDict = CalculateVolumeByPeriod(trades);
 
-                var reportReq = new ReportRequest
-                {
-                    FileName = request.DateTime.ToString("YYYY-DD"),
-                    SaveToLocation = request.FileLocation,
-                    Header = new ReportRow(),
-                    Body = new List<ReportRow>()
-                };
+                var fileName = $"{_options.FileNamePrefix}_{request.DateTime.ToString(_options.DateFormat!)}";
+                var builder = new ReportContentBuilder(fileName, _options!.FileLocation!);
 
-                reportReq.Header.Items = new List<ReportRowItem>
-                {
-                    new ReportRowItem { Text = "Local Time", Width = 10, Alignment = ReportRowItemAlignment.LEFT },
-                    new ReportRowItem { Text = "Volume", Width = 10, Alignment = ReportRowItemAlignment.LEFT }
-                };
+                builder.AddHeaderItem("Local Time", 10, ReportRowItemAlignment.RIGHT)
+                    .AddHeaderItem("Volume", 10, ReportRowItemAlignment.RIGHT);
 
-                foreach (var item in periodCalcs)
+                foreach (var item in periodDict)
                 {
-                    reportReq.Body.Add(new ReportRow
-                    {
-                        Items = new List<ReportRowItem>
-                        {
-                            new ReportRowItem { Text = slidingDate.ToString("HH:mm"), Width = 10, Alignment = ReportRowItemAlignment.RIGHT },
-                            new ReportRowItem { Text = ((int)item.Value).ToString(), Width = 10, Alignment = ReportRowItemAlignment.RIGHT }
-                        }
-                    });
+                    builder.AddBodyRow()
+                        .AddBodyRowItem(slidingDate.ToString("HH:mm"), 10, ReportRowItemAlignment.RIGHT)
+                        .AddBodyRowItem(Math.Round(item.Value, 2).ToString(), 10, ReportRowItemAlignment.RIGHT);
 
                     slidingDate = slidingDate.AddHours(1);
                 }
 
-                return reportReq;
+                return builder.Build();
             }
 
             private Dictionary<int, double> CalculateVolumeByPeriod(IEnumerable<PowerTrade> trades)

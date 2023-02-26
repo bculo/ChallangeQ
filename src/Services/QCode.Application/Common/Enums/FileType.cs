@@ -9,5 +9,6 @@ namespace QCode.Application.Common.Enums
     public enum FileType
     {
         CSV = 0,
+        TXT = 1,
     }
 }

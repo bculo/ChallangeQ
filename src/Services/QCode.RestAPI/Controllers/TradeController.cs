@@ -25,21 +25,7 @@ namespace QCode.RestAPI.Controllers
         [HttpGet("GetTradePositions")]
         public async Task<IActionResult> GetTradePositionsAsync()
         {
-            return Ok(await _mediator.Send(new GetTradePositions.Query()));
-        }
-
-        [HttpPost("CreateReportWithServerLocalTime")]
-        public async Task<IActionResult> CreateReportWithServerLocalTime([FromBody] CreateTradePositionsReport.Command command)
-        {
-            var systemCurrentTimeInfo = _time.DayInfo;
-
-            command.StartOfTheDay = systemCurrentTimeInfo.StartOfTheDay;
-            command.EndOfTheDay = systemCurrentTimeInfo.EndOfTheDay;
-            command.DateTime = systemCurrentTimeInfo.Current;
-
-            await _mediator.Send(command);
-
-            return NoContent();
+            return Ok(await _mediator.Send(new GetPositions.Query()));
         }
     }
 }

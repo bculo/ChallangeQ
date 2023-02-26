@@ -1,4 +1,5 @@
-﻿using QCode.Application.Interfaces;
+﻿using QCode.Application.Common.Models;
+using QCode.Application.Interfaces;
 
 namespace QCode.Application.Services
 {

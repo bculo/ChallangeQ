@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Logging;
+using QCode.Application.Common.Models;
 using QCode.Application.Interfaces;
 using QCode.Core.Exceptions;
 
@@ -37,6 +38,11 @@ namespace QCode.Application.Services
             var validator = new ReportRequestValidator();
             var validationResult = await validator.ValidateAsync(Request!);
 
+            if(validationResult.Errors.Any(i => i.PropertyName == "SaveToLocation"))
+            {
+                throw new QCodeCriticalException("Invalid location path for storing files");
+            }
+
             if(!validationResult.IsValid)
             {
                 throw new QCodeValidationException(validationResult.ToDictionary());
@@ -49,21 +55,14 @@ namespace QCode.Application.Services
         {
             var pathWithoutExtension = Path.Combine(Request!.SaveToLocation!, Request!.FileName!);
             var fullPath = Path.ChangeExtension(pathWithoutExtension, Extension);
+
             if(string.IsNullOrEmpty(fullPath))
             {
                 throw new QCodeValidationException("File path not valid!");
             }
+
             return fullPath;
         }
-
-    }
-
-    public class ReportRequest
-    {
-        public string? FileName { get; set; }
-        public string? SaveToLocation { get; set; }
-        public ReportRow? Header { get; set; }
-        public List<ReportRow>? Body { get; set; }
     }
 
     public class ReportRequestValidator : AbstractValidator<ReportRequest>
@@ -79,31 +78,5 @@ namespace QCode.Application.Services
                 .When(i => !string.IsNullOrEmpty(i.SaveToLocation))
                 .NotEmpty();
         }
-    }
-
-    public class ReportRow
-    {
-        public List<ReportRowItem>? Items { get; set; }
-    }
-
-    public class ReportRowItem
-    {
-        public int Width { get; set; }
-        public string? Text { get; set; }
-        public ReportRowItemAlignment Alignment { get; set; }
-    }
-
-    public enum ReportRowItemAlignment
-    {
-        LEFT = 0,
-        RIGHT = 1,
-    }
-
-    public class ReportResponse
-    {
-        public string? Base64Content { get; set; }
-        public string? ContentType { get; set; }
-        public string? Extension { get; set; }
-        public string? Name { get; set; }
     }
 }

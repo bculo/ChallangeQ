@@ -3,11 +3,6 @@ using Microsoft.Extensions.Logging;
 using QCode.Application.Common.Enums;
 using QCode.Application.Interfaces;
 using QCode.Core.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QCode.Application.Services
 {
@@ -23,7 +18,7 @@ namespace QCode.Application.Services
             _logger = logger;
         }
 
-        public BaseReportCreator CreateFileCreator(FileType type)
+        public IReportCreator CreateFileCreator(FileType type)
         {
             _logger.LogTrace("Creating file generator for type {0}", type);
 
@@ -31,6 +26,8 @@ namespace QCode.Application.Services
             {
                 case FileType.CSV:
                     return _provider.GetRequiredService<CSVReportCreator>();
+                case FileType.TXT:
+                    return _provider.GetRequiredService<TxtReportCreator>();
                 default:
                     throw new QCodeBaseException($"File generator for type {type} not found");
             }
