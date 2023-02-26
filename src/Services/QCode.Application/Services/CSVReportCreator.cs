@@ -42,7 +42,8 @@ namespace QCode.Application.Services
         {
             try
             {
-                await File.WriteAllTextAsync(GetFullFilePath(), Builder.ToString());
+                DefineFullFilePath();
+                await File.WriteAllTextAsync(FullFilePath!, Builder.ToString());
             }
             catch (SecurityException e) { HandleCriticalException(e); }
             catch (UnauthorizedAccessException e) { HandleCriticalException(e); }

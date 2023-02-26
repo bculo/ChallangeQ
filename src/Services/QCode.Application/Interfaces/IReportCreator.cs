@@ -4,6 +4,6 @@ namespace QCode.Application.Interfaces
 {
     public interface IReportCreator
     {
-        Task CreateReport(ReportRequest request);
+        Task<string> CreateReport(ReportRequest request);
     }
 }

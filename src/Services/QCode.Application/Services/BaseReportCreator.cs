@@ -10,6 +10,7 @@ namespace QCode.Application.Services
     {
         protected readonly ILogger _logger;
         protected ReportRequest? Request { get; set; }
+        protected string? FullFilePath { get; set; }
 
         protected abstract string? ContentType { get; }
         protected abstract string? Extension { get; }
@@ -22,13 +23,15 @@ namespace QCode.Application.Services
         protected abstract Task PrepareContent();
         protected abstract Task SaveReport();
 
-        public async Task CreateReport(ReportRequest request)
+        public async Task<string> CreateReport(ReportRequest request)
         {
             Request = request ?? throw new ArgumentNullException(nameof(request));
 
             await ValidateInputModel();
             await PrepareContent();
             await SaveReport();
+
+            return FullFilePath!;
         }
 
         protected virtual async Task ValidateInputModel()
@@ -47,17 +50,15 @@ namespace QCode.Application.Services
             }
         }
 
-        protected virtual string GetFullFilePath()
+        protected virtual void DefineFullFilePath()
         {
             var pathWithoutExtension = Path.Combine(Request!.SaveToLocation!, Request!.FileName!);
-            var fullPath = Path.ChangeExtension(pathWithoutExtension, Extension);
+            FullFilePath = Path.ChangeExtension(pathWithoutExtension, Extension);
 
-            if(string.IsNullOrEmpty(fullPath))
+            if(string.IsNullOrEmpty(FullFilePath))
             {
                 throw new QCodeValidationException("File path not valid!");
             }
-
-            return fullPath;
         }
     }
 

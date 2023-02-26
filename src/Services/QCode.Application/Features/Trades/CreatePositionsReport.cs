@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Polly;
 using QCode.Application.Common.Enums;
+using QCode.Application.Common.Events;
 using QCode.Application.Common.Models;
 using QCode.Application.Common.Options;
 using QCode.Application.Interfaces;
@@ -23,6 +24,7 @@ namespace QCode.Application.Features.Trades
 
         public class Handler : IRequestHandler<Command>
         {
+            private readonly IMediator _mediator;
             private readonly ILogger<Handler> _logger;
             private readonly IPowerService _powerService;
             private readonly IReportCreatorFactory _factory;
@@ -31,12 +33,14 @@ namespace QCode.Application.Features.Trades
             public Handler(ILogger<Handler> logger,
                 IPowerService powerService,
                 IReportCreatorFactory factory,
-                IOptionsSnapshot<FileReportOptions> options)
+                IOptionsSnapshot<FileReportOptions> options,
+                IMediator mediator)
             {
                 _logger = logger;
                 _powerService = powerService;
                 _factory = factory;
                 _options = options.Value;
+                _mediator = mediator;
             }
 
             public async Task Handle(Command request, CancellationToken cancellationToken)
@@ -60,9 +64,14 @@ namespace QCode.Application.Features.Trades
 
                 var reportRequest = CreateReportRequestModel(trades, request);
 
-                await reportCreator.CreateReport(reportRequest);
+                _logger.LogTrace("Creating report");
 
-                _logger.LogTrace("Report created");
+                var filePath = await reportCreator.CreateReport(reportRequest);
+
+                await _mediator.Publish(new ReportCreated
+                {
+                    FullPath = filePath
+                });
             }
 
             private ReportRequest CreateReportRequestModel(IEnumerable<PowerTrade> trades, Command request)
