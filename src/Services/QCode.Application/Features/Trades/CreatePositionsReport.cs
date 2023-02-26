@@ -44,32 +44,32 @@ namespace QCode.Application.Features.Trades
             }
 
             public async Task Handle(Command request, CancellationToken cancellationToken)
-            {
-                _logger.LogTrace("CreatePositionsReport.Handler called");
-
-                var polly = Policy.Handle<Exception>()
-                    .WaitAndRetryAsync(3,
-                        _ => TimeSpan.FromSeconds(1),
-                        (Exception e, TimeSpan s) => _logger.LogError(e, e.Message));
-
+            {        
                 _logger.LogTrace("Fetching trades from {0}", nameof(IPowerService));
 
-                var trades = await polly.ExecuteAsync(async () => await _powerService.GetTradesAsync(request.DateTime));
+                var policy = GetExecutionPolicy();
+                var trades = await policy.ExecuteAsync(async () => await _powerService.GetTradesAsync(request.DateTime));
 
-                _logger.LogTrace("Trades fetched from {0}", nameof(IPowerService));
+                _logger.LogTrace("Trades fetched from {0}. Creating positions report...", nameof(IPowerService));
 
                 var reportCreator = _factory.CreateFileCreator(request.Type);
-
                 var reportRequest = CreateReportRequestModel(trades, request);
-
-                _logger.LogTrace("Creating report");
-
                 var filePath = await reportCreator.CreateReport(reportRequest);
 
                 await _mediator.Publish(new ReportCreated
                 {
                     FullPath = filePath
                 });
+            }
+
+            private AsyncPolicy GetExecutionPolicy()
+            {
+                var overallTimeoutPolicy = Policy.TimeoutAsync(40);
+                var waitAndRetryPolicy = Policy.Handle<Exception>()
+                    .WaitAndRetryAsync(3,
+                        _ => TimeSpan.FromSeconds(1),
+                       (Exception e, TimeSpan s) => _logger.LogError(e, e.Message));
+                return overallTimeoutPolicy.WrapAsync(waitAndRetryPolicy);
             }
 
             private ReportRequest CreateReportRequestModel(IEnumerable<PowerTrade> trades, Command request)
