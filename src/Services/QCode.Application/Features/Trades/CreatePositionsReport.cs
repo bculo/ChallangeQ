@@ -41,18 +41,28 @@ namespace QCode.Application.Features.Trades
 
             public async Task Handle(Command request, CancellationToken cancellationToken)
             {
+                _logger.LogTrace("CreatePositionsReport.Handler called");
+
                 var polly = Policy.Handle<Exception>()
                     .WaitAndRetryAsync(3,
                         _ => TimeSpan.FromSeconds(1),
                         (Exception e, TimeSpan s) => _logger.LogError(e, e.Message));
 
+                _logger.LogTrace("Fetching trades from {0}", nameof(IPowerService));
+
                 var trades = await polly.ExecuteAsync(async () => await _powerService.GetTradesAsync(request.DateTime));
 
+                _logger.LogTrace("Trades fetched from {0}", nameof(IPowerService));
+
                 var reportCreator = _factory.CreateFileCreator(request.Type);
+
+                _logger.LogTrace("Preping ReportService model");
 
                 var reportRequest = CreateReportRequestModel(trades, request);
 
                 await reportCreator.CreateReport(reportRequest);
+
+                _logger.LogTrace("Report created");
             }
 
             private ReportRequest CreateReportRequestModel(IEnumerable<PowerTrade> trades, Command request)

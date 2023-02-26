@@ -1,0 +1,28 @@
+2023-02-26 12:12:28.590 +01:00 [DBG] Hosting starting
+2023-02-26 12:12:28.602 +01:00 [INF] StartAsync method called in Worker service
+2023-02-26 12:12:28.612 +01:00 [VRB] Scope created inside Worker
+2023-02-26 12:12:28.613 +01:00 [VRB] Sending CreatePositionsReport.Command
+2023-02-26 12:12:28.640 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2023-02-26 12:12:28.641 +01:00 [INF] Hosting environment: Development
+2023-02-26 12:12:28.642 +01:00 [INF] Content root path: D:\Applications\QCodeChallange\QCode\src\Services\QCode.BGWorker
+2023-02-26 12:12:28.643 +01:00 [DBG] Hosting started
+2023-02-26 12:12:29.763 +01:00 [VRB] Creating file generator for type "CSV"
+2023-02-26 12:12:29.773 +01:00 [VRB] Validation started
+2023-02-26 12:12:29.810 +01:00 [VRB] Validation finished
+2023-02-26 12:12:29.814 +01:00 [VRB] CreatePositionsReport.Command executed
+2023-02-26 12:17:03.939 +01:00 [DBG] Hosting starting
+2023-02-26 12:17:03.957 +01:00 [INF] StartAsync method called in Worker service
+2023-02-26 12:17:03.974 +01:00 [VRB] Scope created inside Worker
+2023-02-26 12:17:03.974 +01:00 [VRB] Sending CreatePositionsReport.Command
+2023-02-26 12:17:03.996 +01:00 [VRB] CreatePositionsReport.Handler called
+2023-02-26 12:17:03.998 +01:00 [VRB] Fetching trades from IPowerService
+2023-02-26 12:17:04.008 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2023-02-26 12:17:04.009 +01:00 [INF] Hosting environment: Development
+2023-02-26 12:17:04.009 +01:00 [INF] Content root path: D:\Applications\QCodeChallange\QCode\src\Services\QCode.BGWorker
+2023-02-26 12:17:04.010 +01:00 [DBG] Hosting started
+2023-02-26 12:17:08.166 +01:00 [VRB] Trades fetched from IPowerService
+2023-02-26 12:17:08.167 +01:00 [VRB] Creating file generator for type "CSV"
+2023-02-26 12:17:08.168 +01:00 [VRB] Preping ReportService model
+2023-02-26 12:17:08.222 +01:00 [VRB] Report created
+2023-02-26 12:17:08.224 +01:00 [VRB] CreatePositionsReport.Command executed
+2023-02-26 12:17:08.225 +01:00 [VRB] Next execution in 55741 ms

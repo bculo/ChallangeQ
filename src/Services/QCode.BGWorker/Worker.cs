@@ -57,12 +57,13 @@ namespace QCode.BGWorker
                 }
                 catch(Exception e)
                 {
-                    if(e is QCodeCriticalException)
+                    if (e is QCodeCriticalException)
                     {
                         _logger.LogCritical("Shutting down background service... Reason: {0}", e.Message);
                         break;
                     }
 
+                    _logger.LogTrace("CreatePositionsReport.Command failed");
                     await Task.Delay(GetDelayTime(options.Value.IntervalTimeInMinutes, stopWatch), stoppingToken);
                 }
             }
@@ -85,7 +86,11 @@ namespace QCode.BGWorker
                 return (3 * 60000) - elapsedTime;
             }
 
-            return (intervalInMinutes * 60000) - elapsedTime;
+            var nextExecution = (intervalInMinutes * 60000) - elapsedTime;
+
+            _logger.LogTrace("Next execution in {0} ms", nextExecution);
+
+            return nextExecution;
         }
     }
 }

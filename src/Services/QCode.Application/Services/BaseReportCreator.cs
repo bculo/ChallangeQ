@@ -33,8 +33,6 @@ namespace QCode.Application.Services
 
         protected virtual async Task ValidateInputModel()
         {
-            _logger.LogTrace("Validation started");
-
             var validator = new ReportRequestValidator();
             var validationResult = await validator.ValidateAsync(Request!);
 
@@ -47,8 +45,6 @@ namespace QCode.Application.Services
             {
                 throw new QCodeValidationException(validationResult.ToDictionary());
             }
-
-            _logger.LogTrace("Validation finished");
         }
 
         protected virtual string GetFullFilePath()
