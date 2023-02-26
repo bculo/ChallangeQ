@@ -60,8 +60,6 @@ namespace QCode.Application.Features.Trades
 
                 var reportCreator = _factory.CreateFileCreator(request.Type);
 
-                _logger.LogTrace("Preping ReportService model");
-
                 var reportRequest = CreateReportRequestModel(trades, request);
 
                 _logger.LogTrace("Creating report");

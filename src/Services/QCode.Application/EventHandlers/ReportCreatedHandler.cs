@@ -15,7 +15,7 @@ namespace QCode.Application.EventHandlers
 
         public Task Handle(ReportCreated notification, CancellationToken cancellationToken)
         {
-            _logger.LogTrace("File created. Path {0}", notification.FullPath);
+            _logger.LogTrace("Report created. Path {0}", notification.FullPath);
             return Task.CompletedTask;
         }
     }

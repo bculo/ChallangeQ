@@ -1,6 +1,6 @@
 using QCode.Application;
 using QCode.Application.Common.Options;
-using QCode.BGWorker;
+using QCode.BGTimerWorker;
 using Serilog;
 using System.Diagnostics;
 
@@ -22,7 +22,3 @@ Serilog.Debugging.SelfLog.Enable(msg => {
 });
 
 await host.RunAsync();
-
-
-
-

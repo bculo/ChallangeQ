@@ -1,8 +1,8 @@
 using MediatR;
 using Microsoft.Extensions.Options;
+using QCode.Application.Common.Options;
 using QCode.Application.Features.Trades;
 using QCode.Application.Interfaces;
-using QCode.BGWorker.Options;
 using QCode.Core.Exceptions;
 using System.Diagnostics;
 

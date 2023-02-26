@@ -1,0 +1,68 @@
+2023-02-26 19:28:16.468 +01:00 [DBG] Hosting starting
+2023-02-26 19:28:25.888 +01:00 [INF] Timed Hosted Service running.
+2023-02-26 19:29:08.708 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2023-02-26 19:29:11.610 +01:00 [INF] Hello world
+2023-02-26 19:29:11.613 +01:00 [INF] Hosting environment: Development
+2023-02-26 19:29:11.614 +01:00 [INF] Content root path: D:\Applications\QCodeChallange\QCode\src\Services\QCode.BGTimerWorker
+2023-02-26 19:29:11.615 +01:00 [DBG] Hosting started
+2023-02-26 19:29:15.464 +01:00 [INF] Hello world
+2023-02-26 19:29:20.177 +01:00 [INF] Hello world
+2023-02-26 19:29:23.716 +01:00 [INF] Hello world
+2023-02-26 19:29:28.710 +01:00 [INF] Hello world
+2023-02-26 19:29:33.714 +01:00 [INF] Hello world
+2023-02-26 19:29:38.716 +01:00 [INF] Hello world
+2023-02-26 19:29:43.712 +01:00 [INF] Hello world
+2023-02-26 19:29:48.722 +01:00 [INF] Hello world
+2023-02-26 19:29:53.714 +01:00 [INF] Hello world
+2023-02-26 19:29:58.709 +01:00 [INF] Hello world
+2023-02-26 19:30:03.711 +01:00 [INF] Hello world
+2023-02-26 19:30:08.720 +01:00 [INF] Hello world
+2023-02-26 19:30:13.728 +01:00 [INF] Hello world
+2023-02-26 19:30:18.711 +01:00 [INF] Hello world
+2023-02-26 19:30:23.719 +01:00 [INF] Hello world
+2023-02-26 19:30:28.708 +01:00 [INF] Hello world
+2023-02-26 19:46:04.891 +01:00 [DBG] Hosting starting
+2023-02-26 19:46:04.920 +01:00 [INF] Setting timer. Service will execute Extract every 1 minutes
+2023-02-26 19:46:04.925 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2023-02-26 19:46:04.926 +01:00 [INF] Hosting environment: Development
+2023-02-26 19:46:04.931 +01:00 [INF] Content root path: D:\Applications\QCodeChallange\QCode\src\Services\QCode.BGTimerWorker
+2023-02-26 19:46:04.931 +01:00 [VRB] Creating scope inside ExecuteExtract method
+2023-02-26 19:46:04.932 +01:00 [DBG] Hosting started
+2023-02-26 19:46:04.943 +01:00 [VRB] Scope created inside Worker
+2023-02-26 19:46:04.944 +01:00 [VRB] Sending CreatePositionsReport.Command
+2023-02-26 19:46:05.013 +01:00 [VRB] CreatePositionsReport.Handler called
+2023-02-26 19:46:05.016 +01:00 [VRB] Fetching trades from IPowerService
+2023-02-26 19:46:07.724 +01:00 [VRB] Trades fetched from IPowerService
+2023-02-26 19:46:07.725 +01:00 [VRB] Creating file generator for type "CSV"
+2023-02-26 19:46:07.726 +01:00 [VRB] Preping ReportService model
+2023-02-26 19:46:07.735 +01:00 [VRB] Creating report
+2023-02-26 19:46:07.796 +01:00 [VRB] File created. Path D:\Test\PowerPosition_20230226_1846.csv
+2023-02-26 19:46:07.798 +01:00 [VRB] CreatePositionsReport.Command executed
+2023-02-26 19:47:04.939 +01:00 [VRB] Creating scope inside ExecuteExtract method
+2023-02-26 19:47:04.945 +01:00 [VRB] Scope created inside Worker
+2023-02-26 19:47:04.949 +01:00 [VRB] Sending CreatePositionsReport.Command
+2023-02-26 19:47:04.954 +01:00 [VRB] CreatePositionsReport.Handler called
+2023-02-26 19:47:04.954 +01:00 [VRB] Fetching trades from IPowerService
+2023-02-26 19:47:06.743 +01:00 [VRB] Trades fetched from IPowerService
+2023-02-26 19:47:06.746 +01:00 [VRB] Creating file generator for type "CSV"
+2023-02-26 19:47:06.748 +01:00 [VRB] Preping ReportService model
+2023-02-26 19:47:06.750 +01:00 [VRB] Creating report
+2023-02-26 19:47:06.752 +01:00 [VRB] File created. Path D:\Test\PowerPosition_20230226_1847.csv
+2023-02-26 19:47:06.752 +01:00 [VRB] CreatePositionsReport.Command executed
+2023-02-26 19:47:16.070 +01:00 [DBG] Hosting starting
+2023-02-26 19:47:16.092 +01:00 [INF] Setting timer. Service will execute Extract every 1 minutes
+2023-02-26 19:47:16.096 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2023-02-26 19:47:16.099 +01:00 [INF] Hosting environment: Development
+2023-02-26 19:47:16.100 +01:00 [VRB] Creating scope inside ExecuteExtract method
+2023-02-26 19:47:16.100 +01:00 [INF] Content root path: D:\Applications\QCodeChallange\QCode\src\Services\QCode.BGTimerWorker
+2023-02-26 19:47:16.104 +01:00 [DBG] Hosting started
+2023-02-26 19:47:16.106 +01:00 [VRB] Scope created inside Worker
+2023-02-26 19:47:16.107 +01:00 [VRB] Sending CreatePositionsReport.Command
+2023-02-26 19:47:16.118 +01:00 [VRB] CreatePositionsReport.Handler called
+2023-02-26 19:47:16.120 +01:00 [VRB] Fetching trades from IPowerService
+2023-02-26 19:47:19.018 +01:00 [VRB] Trades fetched from IPowerService
+2023-02-26 19:47:19.019 +01:00 [VRB] Creating file generator for type "CSV"
+2023-02-26 19:47:19.021 +01:00 [VRB] Preping ReportService model
+2023-02-26 19:47:19.030 +01:00 [VRB] Creating report
+2023-02-26 19:47:19.076 +01:00 [VRB] File created. Path D:\Test\PowerPosition_20230226_1847.csv
+2023-02-26 19:47:19.077 +01:00 [VRB] CreatePositionsReport.Command executed

@@ -27,5 +27,11 @@ namespace QCode.RestAPI.Controllers
         {
             return Ok(await _mediator.Send(new GetPositions.Query()));
         }
+
+        [HttpPost("GetPositionsReport")]
+        public async Task<IActionResult> GetPositionsReport([FromBody] GetPositionsReport.Query query)
+        {
+            return Ok(await _mediator.Send(query));
+        }
     }
 }
