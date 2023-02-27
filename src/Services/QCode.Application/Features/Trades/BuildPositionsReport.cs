@@ -12,7 +12,7 @@ using Services;
 
 namespace QCode.Application.Features.Trades
 {
-    public static class CreatePositionsReport
+    public static class BuildPositionsReport
     {
         public class Command : IRequest 
         {
@@ -29,6 +29,7 @@ namespace QCode.Application.Features.Trades
             private readonly ILogger<Handler> _logger;
             private readonly IPowerService _powerService;
             private readonly IReportCreatorFactory _factory;
+            private readonly IExtractAttemptManager _manager;
             private FileReportOptions _options;
             private PowerServiceOptions _psOptions;
 
@@ -37,7 +38,8 @@ namespace QCode.Application.Features.Trades
                 IReportCreatorFactory factory,
                 IOptionsSnapshot<FileReportOptions> options,
                 IOptions<PowerServiceOptions> psOptions,
-                IMediator mediator)
+                IMediator mediator,
+                IExtractAttemptManager manager)
             {
                 _logger = logger;
                 _powerService = powerService;
@@ -45,34 +47,53 @@ namespace QCode.Application.Features.Trades
                 _options = options.Value;
                 _psOptions = psOptions.Value;
                 _mediator = mediator;
+                _manager = manager;
             }
 
             public async Task Handle(Command request, CancellationToken cancellationToken)
-            {        
-                _logger.LogTrace("Fetching trades from {0}", nameof(IPowerService));
-
-                var policy = GetExecutionPolicy();
-                var trades = await policy.ExecuteAsync(async () => await _powerService.GetTradesAsync(request.DateTime));
-
-                _logger.LogTrace("Trades fetched from {0}. Creating positions report...", nameof(IPowerService));
-
-                var reportCreator = _factory.CreateFileCreator(request.Type);
-                var reportRequest = CreateReportRequestModel(trades, request);
-                var filePath = await reportCreator.CreateReport(reportRequest);
-
-                await _mediator.Publish(new ReportCreated
+            {
+                try
                 {
-                    FullPath = filePath
-                });
+                    _logger.LogTrace("Fetching trades from {0}", nameof(IPowerService));
+
+                    var policy = GetExecutionPolicy();
+                    var trades = await policy.ExecuteAsync(async () => await _powerService.GetTradesAsync(request.DateTime));
+
+                    _logger.LogTrace("Trades fetched from {0}. Creating positions report...", nameof(IPowerService));
+
+                    var reportCreator = _factory.CreateFileCreator(request.Type);
+                    var reportRequest = CreateReportRequestModel(trades, request);
+                    var filePath = await reportCreator.CreateReport(reportRequest);
+
+                    await _mediator.Publish(new ReportCreated
+                    {
+                        FullPath = filePath
+                    });
+                }
+                catch
+                {
+                    _manager.HandleFailedAttemptEvent(new Events.PositionsReportBuildFailed
+                    {
+                        DateTime = request.DateTime,
+                        EndOfTheDay = request.EndOfTheDay,
+                        FileType = (int)request.Type,
+                        Id = request.Id,
+                        StartOfTheDay = request.StartOfTheDay,
+                    });
+
+                    throw;
+                }
             }
 
             private AsyncPolicy GetExecutionPolicy()
             {
                 var overallTimeoutPolicy = Policy.TimeoutAsync(_psOptions.Timeout);
+
                 var waitAndRetryPolicy = Policy.Handle<Exception>()
                     .WaitAndRetryAsync(_psOptions.RetryCount,
-                        _ => TimeSpan.FromSeconds(1),
+                        _ => TimeSpan.FromSeconds(3),
                        (Exception e, TimeSpan s) => _logger.LogError(e, $"Retrying after error -> {e.Message}"));
+
                 return overallTimeoutPolicy.WrapAsync(waitAndRetryPolicy);
             }
 

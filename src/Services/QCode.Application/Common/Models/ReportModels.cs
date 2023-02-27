@@ -31,12 +31,4 @@ namespace QCode.Application.Common.Models
         LEFT = 0,
         RIGHT = 1,
     }
-
-    public class ReportResponse
-    {
-        public string? Base64Content { get; set; }
-        public string? ContentType { get; set; }
-        public string? Extension { get; set; }
-        public string? Name { get; set; }
-    }
 }

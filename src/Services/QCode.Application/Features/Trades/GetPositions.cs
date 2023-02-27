@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Polly;
+using QCode.Application.Common.Options;
 using QCode.Application.Interfaces;
 using Services;
 
@@ -16,16 +19,19 @@ namespace QCode.Application.Features.Trades
             private readonly IDateTime _time;
             private readonly ILogger<Handler> _logger;
             private readonly IPowerService _powerService;
+            private PowerServiceOptions _psOptions;
 
             public Handler(IDateTime time,
                 IMapper mapper,
                 ILogger<Handler> logger,
-                IPowerService powerService)
+                IPowerService powerService,
+                IOptions<PowerServiceOptions> psOptions)
             {
                 _time = time;
                 _mapper = mapper;
                 _logger = logger;
                 _powerService = powerService;
+                _psOptions = psOptions.Value;
             }
 
             public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
@@ -33,7 +39,9 @@ namespace QCode.Application.Features.Trades
                 _logger.LogTrace("Fetching powertrades from {0} service", nameof(IPowerService));
 
                 DateTime dateTime = _time.DateTime;
-                var response = await _powerService.GetTradesAsync(dateTime);
+                var policy = GetExecutionPolicy();
+                var trades = await policy.ExecuteAsync(async () => await _powerService.GetTradesAsync(dateTime));
+
 
                 _logger.LogTrace("Trades fetched from {0} service", nameof(IPowerService));
 
@@ -42,8 +50,20 @@ namespace QCode.Application.Features.Trades
                     ExecutedOn = dateTime,
                     TimeZone = _time.TimeZoneName,
                     ExecutedOnUtc = dateTime.ToUniversalTime(),
-                    Trades = _mapper.Map<IEnumerable<Trade>>(response)
+                    Trades = _mapper.Map<IEnumerable<Trade>>(trades)
                 };
+            }
+
+            private AsyncPolicy GetExecutionPolicy()
+            {
+                var overallTimeoutPolicy = Policy.TimeoutAsync(_psOptions.Timeout);
+
+                var waitAndRetryPolicy = Policy.Handle<Exception>()
+                    .WaitAndRetryAsync(_psOptions.RetryCount,
+                        _ => TimeSpan.FromSeconds(3),
+                       (Exception e, TimeSpan s) => _logger.LogError(e, $"Retrying after error -> {e.Message}"));
+
+                return overallTimeoutPolicy.WrapAsync(waitAndRetryPolicy);
             }
         }
 

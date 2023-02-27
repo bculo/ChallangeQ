@@ -1,11 +1,12 @@
-﻿{
+{
   "profiles": {
     "QCode.BGWorker": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "environmentVariables": {
+        "SERVICE_MODE": "Tell",
         "DOTNET_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": true
     }
   }
 }

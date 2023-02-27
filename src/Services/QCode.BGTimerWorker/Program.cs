@@ -5,6 +5,10 @@ using Serilog;
 using System.Diagnostics;
 
 IHost host = Host.CreateDefaultBuilder(args)
+    .UseWindowsService(opt =>
+    {
+        opt.ServiceName = "QCodeChallangeTimerService";
+    })
     .UseSerilog((ctx, cl) =>
     {
         cl.ReadFrom.Configuration(ctx.Configuration);

@@ -44,22 +44,17 @@ namespace QCode.BGTimerWorker
 
         private void ExecuteExtract(object? state)
         {
-            _logger.LogTrace("Creating scope inside ExecuteExtract method");
-
             using var scope = _provider.CreateScope();
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
             var timeService = scope.ServiceProvider.GetRequiredService<IDateTime>();
             var options = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<BGWorkerOptions>>();
-
-            _logger.LogTrace("Scope created inside Worker");
-
             try
             {
                 var timeInfo = timeService.DayInfo;
 
                 _logger.LogTrace("Sending CreatePositionsReport.Command");
 
-                mediator.Send(new CreatePositionsReport.Command
+                mediator.Send(new BuildPositionsReport.Command
                 {
                     DateTime = timeInfo.Current,
                     StartOfTheDay = timeInfo.StartOfTheDay,

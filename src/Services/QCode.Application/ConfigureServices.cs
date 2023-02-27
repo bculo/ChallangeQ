@@ -1,9 +1,11 @@
 ﻿using FluentValidation;
+using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using QCode.Application.Common.Behaviors;
 using QCode.Application.Common.Options;
+using QCode.Application.EventHandlers;
 using QCode.Application.Interfaces;
 using QCode.Application.Services;
 using Services;
@@ -30,6 +32,7 @@ namespace QCode.Application
             services.AddScoped<IPowerService, PowerService>();
             services.AddScoped<IReportCreatorFactory, ReportCreatorFactory>();
             services.AddSingleton<IDateTime, UKLocalTimeService>();
+            services.AddSingleton<IExtractAttemptManager, InMemoryExtractManager>();
 
             services.Configure<FileReportOptions>(configuration.GetSection(nameof(FileReportOptions)));
             services.Configure<PowerServiceOptions>(configuration.GetSection(nameof(PowerServiceOptions)));

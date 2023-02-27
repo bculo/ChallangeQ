@@ -15,6 +15,8 @@ namespace QCode.Application.EventHandlers
 
         public Task Handle(ReportCreated notification, CancellationToken cancellationToken)
         {
+            //Publish via SignalR
+
             _logger.LogTrace("Report created. Path {0}", notification.FullPath);
             return Task.CompletedTask;
         }
