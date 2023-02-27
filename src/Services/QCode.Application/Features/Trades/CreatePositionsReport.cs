@@ -16,6 +16,7 @@ namespace QCode.Application.Features.Trades
     {
         public class Command : IRequest 
         {
+            public Guid Id { get; set; }
             public DateTime DateTime { get; set; }
             public DateTime StartOfTheDay { get; set; }
             public DateTime EndOfTheDay { get; set; }
