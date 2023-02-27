@@ -9,6 +9,8 @@ namespace QCode.BGTimerWorker
 {
     public class Worker : IHostedService, IDisposable
     {
+        private static readonly int DefaultRunPeriod = 3;
+
         private readonly ILogger<Worker> _logger;
         private readonly IServiceProvider _provider;
         private readonly IConfiguration _configuration;
@@ -27,6 +29,11 @@ namespace QCode.BGTimerWorker
         public Task StartAsync(CancellationToken stoppingToken)
         {
             var runPeriod = _configuration.GetValue<int>("BGWorkerOptions:IntervalTimeInMinutes");
+
+            if(runPeriod <= 0)
+            {
+                runPeriod = DefaultRunPeriod;
+            }
 
             _logger.LogInformation("Setting timer. Service will execute extract every {0} minute/minutes", runPeriod);
 

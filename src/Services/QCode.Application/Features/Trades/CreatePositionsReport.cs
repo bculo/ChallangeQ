@@ -29,17 +29,20 @@ namespace QCode.Application.Features.Trades
             private readonly IPowerService _powerService;
             private readonly IReportCreatorFactory _factory;
             private FileReportOptions _options;
+            private PowerServiceOptions _psOptions;
 
             public Handler(ILogger<Handler> logger,
                 IPowerService powerService,
                 IReportCreatorFactory factory,
                 IOptionsSnapshot<FileReportOptions> options,
+                IOptions<PowerServiceOptions> psOptions,
                 IMediator mediator)
             {
                 _logger = logger;
                 _powerService = powerService;
                 _factory = factory;
                 _options = options.Value;
+                _psOptions = psOptions.Value;
                 _mediator = mediator;
             }
 
@@ -64,11 +67,11 @@ namespace QCode.Application.Features.Trades
 
             private AsyncPolicy GetExecutionPolicy()
             {
-                var overallTimeoutPolicy = Policy.TimeoutAsync(40);
+                var overallTimeoutPolicy = Policy.TimeoutAsync(_psOptions.Timeout);
                 var waitAndRetryPolicy = Policy.Handle<Exception>()
-                    .WaitAndRetryAsync(3,
+                    .WaitAndRetryAsync(_psOptions.RetryCount,
                         _ => TimeSpan.FromSeconds(1),
-                       (Exception e, TimeSpan s) => _logger.LogError(e, e.Message));
+                       (Exception e, TimeSpan s) => _logger.LogError(e, $"Retrying after error -> {e.Message}"));
                 return overallTimeoutPolicy.WrapAsync(waitAndRetryPolicy);
             }
 

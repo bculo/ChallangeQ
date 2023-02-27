@@ -10,6 +10,8 @@ namespace QCode.BGWorker
 {
     public class Worker : BackgroundService
     {
+        private static readonly int DefaultRunPeriod = 3;
+
         private readonly ILogger<Worker> _logger;
         private readonly IServiceProvider _provider;
 
@@ -83,7 +85,7 @@ namespace QCode.BGWorker
 
             if (intervalInMinutes <= 0)
             {
-                return (3 * 60000) - elapsedTime;
+                return (DefaultRunPeriod * 60000) - elapsedTime;
             }
 
             var nextExecution = (intervalInMinutes * 60000) - elapsedTime;

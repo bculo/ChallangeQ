@@ -32,6 +32,7 @@ namespace QCode.Application
             services.AddSingleton<IDateTime, UKLocalTimeService>();
 
             services.Configure<FileReportOptions>(configuration.GetSection(nameof(FileReportOptions)));
+            services.Configure<PowerServiceOptions>(configuration.GetSection(nameof(PowerServiceOptions)));
             services.Configure<PerformanceBehaviorOptions>(configuration.GetSection(nameof(PerformanceBehaviorOptions)));
 
             return services;
