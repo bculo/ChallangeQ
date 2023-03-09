@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{AC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QCode.Application.UnitTests", "tests\Services\QCode.Application.UnitTests\QCode.Application.UnitTests.csproj", "{652C7020-DC48-4CCD-A6D1-ED70C73F6FD6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QCode.RestAPI.IntegrationTests", "tests\Services\QCode.RestAPI.IntegrationTests\QCode.RestAPI.IntegrationTests.csproj", "{D02BA1E6-6764-4AC6-B78E-0B2F0BAC97EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{652C7020-DC48-4CCD-A6D1-ED70C73F6FD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{652C7020-DC48-4CCD-A6D1-ED70C73F6FD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{652C7020-DC48-4CCD-A6D1-ED70C73F6FD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D02BA1E6-6764-4AC6-B78E-0B2F0BAC97EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D02BA1E6-6764-4AC6-B78E-0B2F0BAC97EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D02BA1E6-6764-4AC6-B78E-0B2F0BAC97EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D02BA1E6-6764-4AC6-B78E-0B2F0BAC97EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{2C41AD4B-D77F-4597-A877-C49156659353} = {2C6CB651-DC60-4C39-8B11-C7C1F6FA2767}
 		{ACDB1C90-4F59-4805-8C79-8C9167FEEFDE} = {0F25277B-DAB0-473D-BDBE-6A65AB01ACE2}
 		{652C7020-DC48-4CCD-A6D1-ED70C73F6FD6} = {ACDB1C90-4F59-4805-8C79-8C9167FEEFDE}
+		{D02BA1E6-6764-4AC6-B78E-0B2F0BAC97EE} = {ACDB1C90-4F59-4805-8C79-8C9167FEEFDE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A1A638E0-A446-4340-A258-D0F33458219E}

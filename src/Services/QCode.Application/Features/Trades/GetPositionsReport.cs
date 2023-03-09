@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using MimeTypes;
 using QCode.Core.Exceptions;
+using System.IO.Abstractions;
 
 namespace QCode.Application.Features.Trades
 {
@@ -23,9 +23,16 @@ namespace QCode.Application.Features.Trades
 
         public class Handler : IRequestHandler<Query, Response>
         {
+            private readonly IFileSystem _fileSystem;
+
+            public Handler(IFileSystem fileSystem)
+            {
+                _fileSystem = fileSystem;
+            }
+
             public async Task<Response> Handle(Query request, CancellationToken cancellationToken)
             {
-                if(!File.Exists(request.FullFilePath))
+                if(!_fileSystem.File.Exists(request.FullFilePath))
                 {
                     throw new QCodeNotFoundException($"File not found on path {request.FullFilePath}");
                 }
@@ -34,10 +41,10 @@ namespace QCode.Application.Features.Trades
 
                 return new Response
                 {
-                    FileName = Path.GetFileName(request.FullFilePath),
-                    ContentType = MimeTypeMap.GetMimeType(Path.GetExtension(request.FullFilePath)),
+                    FileName = _fileSystem.Path.GetFileName(request.FullFilePath),
+                    ContentType = MimeTypeMap.GetMimeType(_fileSystem.Path.GetExtension(request.FullFilePath)),
                     Base64Content = Convert.ToBase64String(bytes),
-                    Extension = Path.GetExtension(request.FullFilePath)
+                    Extension = _fileSystem.Path.GetExtension(request.FullFilePath)
                 };
             }
         }
