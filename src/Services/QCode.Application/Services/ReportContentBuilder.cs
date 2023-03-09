@@ -47,6 +47,8 @@ namespace QCode.Application.Services
 
         public ReportContentBuilder AddBodyRowItem(string value, int columnWidth, ReportRowItemAlignment alignment = ReportRowItemAlignment.LEFT)
         {
+            if (_lastRow is null) throw new ArgumentNullException("Row is not initilized");
+
             _lastRow!.Items!.Add(new ReportRowItem
             {
                 Text = value?.Trim() ?? string.Empty,

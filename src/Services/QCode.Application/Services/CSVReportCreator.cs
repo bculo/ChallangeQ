@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using FluentValidation;
+using Microsoft.Extensions.Logging;
 using QCode.Application.Common.Models;
-using QCode.Core.Exceptions;
-using System.Security;
+using System.IO.Abstractions;
 using System.Text;
 
 namespace QCode.Application.Services
@@ -12,7 +12,10 @@ namespace QCode.Application.Services
         protected override string? ContentType => "text/csv";
         protected override string? Extension => "csv";
 
-        public CSVReportCreator(ILogger<CSVReportCreator> logger) : base(logger) 
+        public CSVReportCreator(ILogger<CSVReportCreator> logger, 
+            IFileSystem fileSystem,
+            IValidator<ReportRequest> validator) 
+            : base(logger, fileSystem, validator) 
         {
             Builder = new StringBuilder();
         }
@@ -38,22 +41,9 @@ namespace QCode.Application.Services
             Builder.Append(Environment.NewLine);
         }
 
-        protected override async Task SaveReport()
+        protected override string GetContent()
         {
-            try
-            {
-                DefineFullFilePath();
-                await File.WriteAllTextAsync(FullFilePath!, Builder.ToString());
-            }
-            catch (SecurityException e) { HandleCriticalException(e); }
-            catch (UnauthorizedAccessException e) { HandleCriticalException(e); }
-            catch (PathTooLongException e) { HandleCriticalException(e); }
-        }
-
-        private void HandleCriticalException(Exception e)
-        {
-            _logger.LogError(e, e.Message);
-            throw new QCodeCriticalException("Problem with writing file to given location");
+            return Builder.ToString();
         }
     }
 }

@@ -10,5 +10,6 @@ namespace QCode.Application.Common.Enums
     {
         CSV = 0,
         TXT = 1,
+        EXCEL = 2,
     }
 }

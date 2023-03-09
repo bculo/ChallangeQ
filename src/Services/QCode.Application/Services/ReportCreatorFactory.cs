@@ -25,12 +25,19 @@ namespace QCode.Application.Services
             switch (type)
             {
                 case FileType.CSV:
-                    return _provider.GetRequiredService<CSVReportCreator>();
+                    return GetInstance<CSVReportCreator>();
                 case FileType.TXT:
-                    return _provider.GetRequiredService<TxtReportCreator>();
+                    return GetInstance<TxtReportCreator>();
                 default:
                     throw new QCodeBaseException($"File generator for type {type} not found");
             }
+        }
+
+        private IReportCreator GetInstance<T>() where T : BaseReportCreator
+        {
+            T? instance = _provider.GetService<T>() as T;
+            ArgumentNullException.ThrowIfNull(instance, nameof(instance));
+            return instance;
         }
     }
 }

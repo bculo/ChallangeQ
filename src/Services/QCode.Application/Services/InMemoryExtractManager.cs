@@ -11,15 +11,19 @@ namespace QCode.Application.Services
         private readonly ConcurrentQueue<CreatePositionsReport> _queue;
         private readonly ConcurrentQueue<PositionsReportBuildFailed> _errorQueue;
 
-        public InMemoryExtractManager(ILogger<InMemoryExtractManager> logger)
+        public InMemoryExtractManager(ILogger<InMemoryExtractManager> logger,
+            ConcurrentQueue<CreatePositionsReport>? queue,
+            ConcurrentQueue<PositionsReportBuildFailed>? errorQueue)
         {
             _logger = logger;
-            _queue = new ConcurrentQueue<CreatePositionsReport>();
-            _errorQueue = new ConcurrentQueue<PositionsReportBuildFailed>();
+            _queue = queue ?? new ConcurrentQueue<CreatePositionsReport>();
+            _errorQueue = errorQueue ?? new ConcurrentQueue<PositionsReportBuildFailed>();
         }
 
         public void HandleEvent(CreatePositionsReport @event)
         {
+            ArgumentNullException.ThrowIfNull(@event);
+
             _queue.Enqueue(@event);
             _logger.LogTrace("Adding item with ID {0} and time {1} to queue", @event.Id, @event.DateTime);
             _logger.LogTrace("Item count {0} in queue", _queue.Count);
@@ -39,6 +43,8 @@ namespace QCode.Application.Services
 
         public void HandleFailedAttemptEvent(PositionsReportBuildFailed @event)
         {
+            ArgumentNullException.ThrowIfNull(@event);
+
             _errorQueue.Enqueue(@event);
             _logger.LogTrace("Adding item with ID {0} and time {1} to poision queue", @event.Id, @event.DateTime);
             _logger.LogTrace("Item count {0} in poison queue", _errorQueue.Count);
